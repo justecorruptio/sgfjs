@@ -1,4 +1,10 @@
-//TODO:
+(function(){
+
+var HOSHI = {
+    9: [20, 24, 40, 56, 60],
+    13: [42, 48, 84, 120, 126],
+    19: [60, 66, 72, 174, 180, 186, 288, 294, 300]
+}
 
 function parse_sgf_data(data){
     //data = data.replace(/^\s*[(]?|[)]?\s*$/g,'');
@@ -51,10 +57,13 @@ function parse_sgf_data(data){
         }
         data = data.substr(part[0].length);
     }
-    return alt[0];
+    return alt[0][0];
 }
 
 function build_board_area(sgf_elem){
+
+    var board_size = sgf_elem.rows;
+
     var container_elem = document.createElement('div');
     container_elem.classList.add('sgf-container');
 
@@ -67,16 +76,23 @@ function build_board_area(sgf_elem){
     var board_elem = document.createElement('div');
     board_elem.classList.add('sgf-board');
 
-    for(var i = 0; i < sgf_elem.rows; i++){
+    for(var i = 0; i < board_size; i++){
         var row_elem = document.createElement('div');
         row_elem.classList.add('sgf-row');
 
-        for(var j = 0; j < sgf_elem.cols; j++){
+        for(var j = 0; j < board_size; j++){
             var cell_elem = document.createElement('div');
             cell_elem.classList.add('sgf-cell');
 
             var point_elem = document.createElement('div');
             point_elem.classList.add('sgf-point');
+            if(HOSHI[board_size] &&
+                HOSHI[board_size].indexOf(i * board_size + j) != -1
+            ){
+                var hoshi_elem = document.createElement('div');
+                hoshi_elem.classList.add('sgf-hoshi');
+                point_elem.appendChild(hoshi_elem);
+            }
 
             cell_elem.appendChild(point_elem);
 
@@ -111,6 +127,8 @@ function process_sgf_elem(sgf_elem){
     sgf_elem.rows = sgf_elem.data[0]['SZ'] || 19;
     sgf_elem.cols = sgf_elem.data[0]['SZ'] || 19;
 
+    console.log(sgf_elem.data);
+
     sgf_elem.board = [];
     for(var i = 0; i < sgf_elem.rows; i++){
         sgf_elem.board.push(new Array(sgf_elem.cols));
@@ -127,3 +145,5 @@ function show_sgf(){
 }
 
 document.addEventListener('DOMContentLoaded', show_sgf, false);
+
+}());

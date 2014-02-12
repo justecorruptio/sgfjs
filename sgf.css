@@ -2,6 +2,11 @@ sgf {
     width: 100%;
 }
 
+.sgf-container {
+    position: relative;
+    max-width: 720px;
+}
+
 .sgf-board-wrapper {
     position: relative;
     width: 100%;
@@ -114,4 +119,14 @@ sgf {
     display: block;
 }
 
-
+.sgf-hoshi {
+    position: absolute;
+    height: 20%;
+    min-height: 5px;
+    width: 20%;
+    min-width: 5px;
+    border-radius: 50%;
+    background-color: #333333;
+    top: 40%;
+    left: 40%;
+}
