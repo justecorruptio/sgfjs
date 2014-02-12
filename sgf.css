@@ -3,7 +3,6 @@ sgf {
 }
 
 .sgf-container {
-    position: relative;
     max-width: 720px;
 }
 
@@ -122,11 +121,46 @@ sgf {
 .sgf-hoshi {
     position: absolute;
     height: 20%;
-    min-height: 5px;
+    min-height: 6px;
+    max-height: 9px;
     width: 20%;
-    min-width: 5px;
+    min-width: 6px;
+    max-width: 9px;
     border-radius: 50%;
     background-color: #333333;
-    top: 40%;
-    left: 40%;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    margin: auto;
 }
+
+
+.sgf-buttons-row {
+    height: 40px;
+    text-align: justify;
+    width: 100%;
+    font-size: 0.1px;
+    margin-top: 10px;
+}
+
+.sgf-button {
+    width: 22%;
+    height: 30px;
+    display: inline-block;
+
+    text-align: center;
+    vertical-align: middle;
+    border: 1px solid black;
+    background-color: #39a775;
+    font-family: arial, arialMT, Helvetica, sans-serif;
+    font-size: 29px;
+    color: #eeeeee;
+}
+
+.sgf-buttons-row:after {
+    content: "";
+    width: 100%;
+    display: inline-block;
+}
+

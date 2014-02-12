@@ -96,6 +96,8 @@ function build_board_area(sgf_elem){
 
             cell_elem.appendChild(point_elem);
 
+            point_elem.color = 0;
+
             sgf_elem.board[i][j] = point_elem;
             row_elem.appendChild(cell_elem);
         }
@@ -104,6 +106,26 @@ function build_board_area(sgf_elem){
     board_wrapper_inner_elem.appendChild(board_elem);
     board_wrapper_elem.appendChild(board_wrapper_inner_elem);
     container_elem.appendChild(board_wrapper_elem);
+
+    var buttons_row_elem = document.createElement('div');
+    buttons_row_elem.classList.add('sgf-buttons-row');
+    var buttons_list = [
+        ['sgf-button-start', '<<'],
+        ['sgf-button-prev', '<'],
+        ['sgf-button-next', '>'],
+        ['sgf-button-end', '>>']
+    ]
+    for (var i = 0; i < buttons_list.length; i++) {
+        var button_elem = document.createElement('div');
+        button_elem.classList.add('sgf-button', buttons_list[i][0]);
+        button_elem.innerText = buttons_list[i][1];
+        buttons_row_elem.appendChild(button_elem);
+
+        var button_spacer_elem = document.createTextNode(' ');
+        buttons_row_elem.appendChild(button_spacer_elem);
+    }
+    container_elem.appendChild(buttons_row_elem);
+
     sgf_elem.appendChild(container_elem);
 }
 
@@ -126,8 +148,6 @@ function process_sgf_elem(sgf_elem){
     sgf_elem.data = parse_sgf_data(data);
     sgf_elem.rows = sgf_elem.data[0]['SZ'] || 19;
     sgf_elem.cols = sgf_elem.data[0]['SZ'] || 19;
-
-    console.log(sgf_elem.data);
 
     sgf_elem.board = [];
     for(var i = 0; i < sgf_elem.rows; i++){
