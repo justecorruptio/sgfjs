@@ -1,0 +1,117 @@
+sgf {
+    width: 100%;
+}
+
+.sgf-board-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.sgf-board-wrapper:before {
+    content: "";
+    display: block;
+    padding-top: 100%;
+}
+
+.sgf-board-wrapper-inner {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: #F2D252;
+    border: solid 1px black;
+    padding: 2%;
+}
+
+.sgf-board {
+    display: table;
+    table-layout: fixed;
+    height: 100%;
+    width: 100%;
+}
+
+.sgf-row {
+    display: table-row;
+}
+
+.sgf-cell {
+    display: table-cell;
+    empty-cells: show;
+    padding: 0px;
+    width: 1%;
+}
+
+.sgf-point {
+    position: relative;
+    height: 100%;
+    width: 100%;
+}
+
+.sgf-cell:not(:first-child):not(:last-child) .sgf-point:before {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    height: 1px;
+    background-color: #333333;
+    content: "";
+    width: 100%;
+    display: block;
+}
+
+.sgf-cell:first-child .sgf-point:before {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    height: 1px;
+    background-color: #333333;
+    content: "";
+    width: 50%;
+    display: block;
+}
+
+.sgf-cell:last-child .sgf-point:before {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    height: 1px;
+    background-color: #333333;
+    content: "";
+    width: 50%;
+    display: block;
+}
+
+.sgf-row:not(:first-child):not(:last-child) .sgf-cell .sgf-point:after {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 1px;
+    background-color: #333333;
+    content: "";
+    height: 100%;
+    display: block;
+}
+
+.sgf-row:first-child .sgf-cell .sgf-point:after {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 1px;
+    background-color: #333333;
+    content: "";
+    height: 50%;
+    display: block;
+}
+
+.sgf-row:last-child .sgf-cell .sgf-point:after {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 1px;
+    background-color: #333333;
+    content: "";
+    height: 50%;
+    display: block;
+}
+
+
