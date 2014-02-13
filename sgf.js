@@ -1,9 +1,22 @@
 (function(){
 
+var is_mobile = navigator.userAgent.match(/iPhone|android/i);
+
 var HOSHI = {
     9: [20, 24, 40, 56, 60],
     13: [42, 48, 84, 120, 126],
     19: [60, 66, 72, 174, 180, 186, 288, 294, 300]
+}
+
+function arraysEqual(a, b) {
+    if (a === b) return true;
+    if (a == null || b == null) return false;
+    if (a.length != b.length) return false;
+
+    for (var i = 0; i < a.length; ++i) {
+        if (a[i] !== b[i]) return false;
+    }
+    return true;
 }
 
 function parse_sgf_data(data){
@@ -13,13 +26,16 @@ function parse_sgf_data(data){
 
     var stack = [];
     var alt = [];
+    alt.type = 'alt';
     var seq = [];
+    seq.type = 'seq';
     var part;
     while(data.length){
         if(part = data.match(
             /^;(([A-Z]{1,2})(\[([^\\\]]|\\\])*\]\s*)+)+/
         )){
             var node = {};
+            node.type = 'node';
             var sub_part = part[0].match(
                 /([A-Z]{1,2})(\[([^\\\]]|\\\])*\]\s*)+/g
             )
@@ -39,14 +55,17 @@ function parse_sgf_data(data){
             if(seq.length){
                 alt.push(seq);
                 seq = [];
+                seq.type = 'seq';
             }
             stack.push(alt);
             alt = [];
+            alt.type = 'alt';
         }
         else if(part = data.match(/^\)\s*/)){
             if(seq.length){
                 alt.push(seq);
                 seq = [];
+                seq.type = 'seq';
             }
             var curr_alt = alt;
             alt = stack.pop();
@@ -57,6 +76,7 @@ function parse_sgf_data(data){
         }
         data = data.substr(part[0].length);
     }
+    console.debug(alt[0]);
     return alt[0];
 }
 
@@ -110,10 +130,10 @@ function build_board_area(sgf_elem){
     var buttons_row_elem = document.createElement('div');
     buttons_row_elem.classList.add('sgf-buttons-row');
     var buttons_list = [
-        ['sgf-button-start', '<<'],
-        ['sgf-button-prev', '<'],
-        ['sgf-button-next', '>'],
-        ['sgf-button-end', '>>']
+        ['sgf-button-start', '<<', 'button_start_elem'],
+        ['sgf-button-prev', '<', 'button_prev_elem'],
+        ['sgf-button-next', '>', 'button_next_elem'],
+        ['sgf-button-end', '>>', 'button_end_elem']
     ]
     for (var i = 0; i < buttons_list.length; i++) {
         var button_elem = document.createElement('div');
@@ -121,9 +141,13 @@ function build_board_area(sgf_elem){
         button_elem.innerText = buttons_list[i][1];
         buttons_row_elem.appendChild(button_elem);
 
+        sgf_elem[buttons_list[i][2]] = button_elem;
+
         var button_spacer_elem = document.createTextNode(' ');
         buttons_row_elem.appendChild(button_spacer_elem);
     }
+    sgf_elem.button_start_elem.classList.add('sgf-button-disabled');
+    sgf_elem.button_prev_elem.classList.add('sgf-button-disabled');
     container_elem.appendChild(buttons_row_elem);
 
     var info_elem = document.createElement('div');
@@ -165,17 +189,91 @@ function process_sgf_elem(sgf_elem){
     build_board_area(sgf_elem);
 
     sgf_elem.getElementsByClassName('sgf-button-next')[0]
-        .addEventListener('click', function(e){
-            next_node(sgf_elem);
-            process_node(sgf_elem, get_current_node(sgf_elem));
+        .addEventListener(is_mobile?'touchstart':'click',function(e){
+            var is_last = next_node(sgf_elem);
+            process_node(sgf_elem,
+                get_node_by_path(sgf_elem, sgf_elem.path));
+            sgf_elem.button_start_elem.classList
+                .remove('sgf-button-disabled');
+            sgf_elem.button_prev_elem.classList
+                .remove('sgf-button-disabled');
+
+            if (is_last){
+                sgf_elem.button_next_elem.classList
+                    .add('sgf-button-disabled');
+                sgf_elem.button_end_elem.classList
+                    .add('sgf-button-disabled');
+            }
+        });
+
+    sgf_elem.getElementsByClassName('sgf-button-end')[0]
+        .addEventListener(is_mobile?'touchstart':'click',function(e){
+            var is_last = false;
+            while(!is_last){
+                is_last = next_node(sgf_elem);
+                process_node(sgf_elem,
+                    get_node_by_path(sgf_elem, sgf_elem.path));
+            }
+            sgf_elem.button_start_elem.classList
+                .remove('sgf-button-disabled');
+            sgf_elem.button_prev_elem.classList
+                .remove('sgf-button-disabled');
+            sgf_elem.button_next_elem.classList
+                .add('sgf-button-disabled');
+            sgf_elem.button_end_elem.classList
+                .add('sgf-button-disabled');
+        });
+
+    sgf_elem.getElementsByClassName('sgf-button-prev')[0]
+        .addEventListener(is_mobile?'touchstart':'click', function(e){
+            if (sgf_elem.path == [0, 0]){
+                return;
+            }
+            prev_node(sgf_elem);
+            var state = sgf_elem.history.pop();
+            update_elem_from_state(sgf_elem, state);
+            sgf_elem.button_next_elem.classList
+                .remove('sgf-button-disabled');
+            sgf_elem.button_end_elem.classList
+                .remove('sgf-button-disabled');
+            if (arraysEqual(sgf_elem.path, [0, 0])){
+                sgf_elem.button_start_elem.classList
+                    .add('sgf-button-disabled');
+                sgf_elem.button_prev_elem.classList
+                    .add('sgf-button-disabled');
+            }
         })
-    process_node(sgf_elem, get_current_node(sgf_elem));
+
+    sgf_elem.getElementsByClassName('sgf-button-start')[0]
+        .addEventListener(is_mobile?'touchstart':'click', function(e){
+            sgf_elem.captures = [0, 0];
+            sgf_elem.history = [];
+            sgf_elem.path = [0, 0];
+            sgf_elem.last_move = false;
+            for(var i = 0; i < sgf_elem.rows; i++){
+                for(var j = 0; j < sgf_elem.cols; j++){
+                    sgf_elem.board[i][j].color = 0;
+                }
+            }
+            process_node(sgf_elem,
+                get_node_by_path(sgf_elem, sgf_elem.path));
+            sgf_elem.button_start_elem.classList
+                .add('sgf-button-disabled');
+            sgf_elem.button_prev_elem.classList
+                .add('sgf-button-disabled');
+            sgf_elem.button_next_elem.classList
+                .remove('sgf-button-disabled');
+            sgf_elem.button_end_elem.classList
+                .remove('sgf-button-disabled');
+        })
+
+    process_node(sgf_elem, get_node_by_path(sgf_elem, sgf_elem.path));
 }
 
-function get_current_node(sgf_elem){
+function get_node_by_path(sgf_elem, path){
     var node = sgf_elem.data;
-    for(var i = 0; i < sgf_elem.path.length; i++){
-        node = node[sgf_elem.path[i]];
+    for(var i = 0; i < path.length; i++){
+        node = node[path[i]];
     }
     return node;
 }
@@ -183,18 +281,41 @@ function get_current_node(sgf_elem){
 function next_node(sgf_elem){
     var path = sgf_elem.path;
     var last = path.pop();
-    var node = get_current_node(sgf_elem);
+    var seq = get_node_by_path(sgf_elem, path);
+    var alt;
 
-    while(true){
-        if(last >= node.length){
-            last = path.pop();
-            node = get_current_node(sgf_elem);
-        }
-        else{
-            path.push(last + 1);
-            return '';
-        }
+    if(last == seq.length - 1){
+        path.pop();
+        path.push(1)
+        path.push(0)
+        path.push(0)
     }
+    else{
+        path.push(last + 1);
+    }
+
+    last = path[path.length - 1];
+    seq = get_node_by_path(sgf_elem, path.slice(0, path.length - 1));
+    alt = get_node_by_path(sgf_elem, path.slice(0, path.length - 2));
+    return last == seq.length - 1 && alt.length == 1;
+}
+
+function prev_node(sgf_elem){
+    var path = sgf_elem.path;
+    var last = path.pop();
+    var node = get_node_by_path(sgf_elem, path);
+
+    if(last == 0){
+        path.pop();
+        path.pop();
+        path.push(0);
+        node = get_node_by_path(sgf_elem, path);
+        path.push(node.length - 1);
+    }
+    else{
+        path.push(last - 1);
+    }
+    return false;
 }
 
 function coord_to_pos(coord){
@@ -232,10 +353,10 @@ function update_elem_from_state(sgf_elem, state){
             point_elem.classList.add(classes[color]);
         }
     }
-    if(sgf_elem.last_move){
-        var i = sgf_elem.last_move[0];
-        var j = sgf_elem.last_move[1];
-        sgf_elem.board[i][j].classList.remove('sgf-lastmove');
+    var last_move_elems = sgf_elem
+        .getElementsByClassName('sgf-lastmove');
+    if(last_move_elems.length){
+        last_move_elems[0].classList.remove('sgf-lastmove');
     }
     sgf_elem.last_move = state.last_move;
     if(sgf_elem.last_move){

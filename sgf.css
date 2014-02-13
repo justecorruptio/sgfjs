@@ -6,6 +6,13 @@ sgf {
     max-width: 720px;
     background-color: #dddddd;
     padding: 7px;
+
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 .sgf-board-wrapper {
@@ -164,8 +171,8 @@ sgf {
 .sgf-lastmove:after {
     content: "";
     position: absolute;
-    height: 50%;
-    width: 50%;
+    height: 30%;
+    width: 30%;
     border-radius: 50%;
     border: 2px solid #cb4582;
     top: 0;
@@ -182,6 +189,12 @@ sgf {
     margin-top: 7px;
 }
 
+.sgf-buttons-row:after {
+    content: "";
+    width: 100%;
+    display: inline-block;
+}
+
 .sgf-button {
     width: 22%;
     height: 30px;
@@ -196,10 +209,8 @@ sgf {
     color: #eeeeee;
 }
 
-.sgf-buttons-row:after {
-    content: "";
-    width: 100%;
-    display: inline-block;
+.sgf-button-disabled {
+    visibility: hidden;
 }
 
 .sgf-info {
