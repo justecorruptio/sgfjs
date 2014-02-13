@@ -4,6 +4,8 @@ sgf {
 
 .sgf-container {
     max-width: 720px;
+    background-color: #dddddd;
+    padding: 7px;
 }
 
 .sgf-board-wrapper {
@@ -24,7 +26,7 @@ sgf {
     left: 0;
     right: 0;
     background-color: #F2D252;
-    border: solid 1px black;
+    border: solid 1px #333333;
     padding: 2%;
 }
 
@@ -52,7 +54,7 @@ sgf {
     width: 100%;
 }
 
-.sgf-cell:not(:first-child):not(:last-child) .sgf-point:before {
+.sgf-cell:not(:first-child):not(:last-child) .sgf-empty:before {
     position: absolute;
     left: 0;
     top: 50%;
@@ -63,7 +65,7 @@ sgf {
     display: block;
 }
 
-.sgf-cell:first-child .sgf-point:before {
+.sgf-cell:first-child .sgf-empty:before {
     position: absolute;
     right: 0;
     top: 50%;
@@ -74,7 +76,7 @@ sgf {
     display: block;
 }
 
-.sgf-cell:last-child .sgf-point:before {
+.sgf-cell:last-child .sgf-empty:before {
     position: absolute;
     left: 0;
     top: 50%;
@@ -85,7 +87,7 @@ sgf {
     display: block;
 }
 
-.sgf-row:not(:first-child):not(:last-child) .sgf-cell .sgf-point:after {
+.sgf-row:not(:first-child):not(:last-child) .sgf-cell .sgf-empty:after {
     position: absolute;
     top: 0;
     left: 50%;
@@ -96,7 +98,7 @@ sgf {
     display: block;
 }
 
-.sgf-row:first-child .sgf-cell .sgf-point:after {
+.sgf-row:first-child .sgf-cell .sgf-empty:after {
     position: absolute;
     bottom: 0;
     left: 50%;
@@ -107,7 +109,7 @@ sgf {
     display: block;
 }
 
-.sgf-row:last-child .sgf-cell .sgf-point:after {
+.sgf-row:last-child .sgf-cell .sgf-empty:after {
     position: absolute;
     top: 0;
     left: 50%;
@@ -118,7 +120,7 @@ sgf {
     display: block;
 }
 
-.sgf-hoshi {
+.sgf-empty .sgf-hoshi {
     position: absolute;
     height: 20%;
     min-height: 6px;
@@ -135,13 +137,49 @@ sgf {
     margin: auto;
 }
 
+.sgf-white:before {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    background-color: #eeeeee;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    border: solid 2px #333333;
+}
+
+.sgf-black:before {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    background-color: #333333;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    border: solid 2px #333333;
+}
+
+.sgf-lastmove:after {
+    content: "";
+    position: absolute;
+    height: 50%;
+    width: 50%;
+    border-radius: 50%;
+    border: 2px solid #cb4582;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    margin: auto;
+}
 
 .sgf-buttons-row {
-    height: 40px;
     text-align: justify;
     width: 100%;
     font-size: 0.1px;
-    margin-top: 10px;
+    margin-top: 7px;
 }
 
 .sgf-button {
@@ -151,7 +189,7 @@ sgf {
 
     text-align: center;
     vertical-align: middle;
-    border: 1px solid black;
+    border: 1px solid #333333;
     background-color: #39a775;
     font-family: arial, arialMT, Helvetica, sans-serif;
     font-size: 29px;
@@ -164,3 +202,9 @@ sgf {
     display: inline-block;
 }
 
+.sgf-info {
+    margin-top: 7px;
+    min-height: 50px;
+    border: 1px solid #333333;
+    background-color: #eeeeee;
+}
