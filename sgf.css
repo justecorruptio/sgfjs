@@ -174,7 +174,8 @@ sgf {
     height: 30%;
     width: 30%;
     border-radius: 50%;
-    border: 2px solid #cb4582;
+    //border: 2px solid #cb4582;
+    background-color: #cb4582;
     top: 0;
     left: 0;
     bottom: 0;
@@ -213,9 +214,12 @@ sgf {
     visibility: hidden;
 }
 
-.sgf-info {
+.sgf-comment {
     margin-top: 7px;
-    min-height: 50px;
+    height: 120px;
+    max-height: 120px;
+    overflow: auto;
     border: 1px solid #333333;
     background-color: #eeeeee;
+    padding: 3px;
 }

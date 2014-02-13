@@ -1,3 +1,9 @@
+//TODO
+//  Alternate branches
+//  Captures
+//  present pass
+//  player/komi info
+
 (function(){
 
 var is_mobile = navigator.userAgent.match(/iPhone|android/i);
@@ -150,9 +156,10 @@ function build_board_area(sgf_elem){
     sgf_elem.button_prev_elem.classList.add('sgf-button-disabled');
     container_elem.appendChild(buttons_row_elem);
 
-    var info_elem = document.createElement('div');
-    info_elem.classList.add('sgf-info');
-    container_elem.appendChild(info_elem);
+    var comment_elem = document.createElement('div');
+    comment_elem.classList.add('sgf-comment');
+    sgf_elem.comment_elem = comment_elem;
+    container_elem.appendChild(comment_elem);
 
     sgf_elem.appendChild(container_elem);
 }
@@ -282,7 +289,6 @@ function next_node(sgf_elem){
     var path = sgf_elem.path;
     var last = path.pop();
     var seq = get_node_by_path(sgf_elem, path);
-    var alt;
 
     if(last == seq.length - 1){
         path.pop();
@@ -297,6 +303,7 @@ function next_node(sgf_elem){
     last = path[path.length - 1];
     seq = get_node_by_path(sgf_elem, path.slice(0, path.length - 1));
     alt = get_node_by_path(sgf_elem, path.slice(0, path.length - 2));
+    console.debug(path);
     return last == seq.length - 1 && alt.length == 1;
 }
 
@@ -336,6 +343,7 @@ function sgf_elem_to_state(sgf_elem){
         }
     }
     state.last_move = sgf_elem.last_move;
+    state.comment = sgf_elem.comment;
     return state;
 }
 
@@ -359,11 +367,14 @@ function update_elem_from_state(sgf_elem, state){
         last_move_elems[0].classList.remove('sgf-lastmove');
     }
     sgf_elem.last_move = state.last_move;
-    if(sgf_elem.last_move){
+    if(sgf_elem.last_move && sgf_elem.last_move != 'pass'){
         var i = sgf_elem.last_move[0];
         var j = sgf_elem.last_move[1];
         sgf_elem.board[i][j].classList.add('sgf-lastmove');
     }
+
+    sgf_elem.comment = state.comment;
+    sgf_elem.comment_elem.innerText = state.comment;
 }
 
 function process_node(sgf_elem, node){
@@ -379,10 +390,18 @@ function process_node(sgf_elem, node){
         for (var j = 0; j < moves.length; j++){
             var pos = coord_to_pos(moves[j]);
             play_move(state, color, pos);
+            if (moves[j] == 'tt' || moves[j] == ''){
+                last_move = 'pass';
+            }
+            else{
+                last_move = pos.slice(0);
+            }
             move_count ++;
-            last_move = pos.slice(0);
         }
     }
+
+    state.comment = node['C'] && node['C'][0] || '';
+
     if (move_count == 1){
         state.last_move = last_move;
     }
@@ -437,6 +456,9 @@ function play_move(state, color, pos){
     var b = pos[1];
     var rows = board.length;
     var cols = board[0].length;
+    if (a == 19 && b == 19){
+        return 1;
+    }
     if(board[a][b]){
         return 0;
     }
@@ -471,6 +493,7 @@ function play_move(state, color, pos){
             remove_marks(board, rows, cols, marks);
         }
     }
+    return 1;
 }
 
 function show_sgf(){
