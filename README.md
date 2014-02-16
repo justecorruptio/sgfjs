@@ -13,3 +13,7 @@ Simply link the library and stylesheet from your page.
 <link rel="stylesheet" href="sgf.css">
 <script src="sgf.js"></script>
 ```
+
+Elsewhere in your HTML content add an `<sgf>` tag with either `src` attribute
+linking to an SGF file, a `data` attribute containing SGF data, or the SGF
+data surrounded by the tag.
