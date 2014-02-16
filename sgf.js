@@ -185,6 +185,9 @@ function process_sgf_elem(sgf_elem){
     if (!data){
         return;
     }
+
+    sgf_elem.innerHTML = '';
+
     sgf_elem.data = parse_sgf_data(data);
     sgf_elem.rows = sgf_elem.data[0][0]['SZ'] || 19;
     sgf_elem.cols = sgf_elem.data[0][0]['SZ'] || 19;
@@ -560,6 +563,11 @@ function play_move(state, color, pos){
 
 function show_sgf(){
     var sgf_elems = document.getElementsByTagName('SGF');
+    for(var i = 0; i < sgf_elems.length; i++){
+        process_sgf_elem(sgf_elems[i]);
+    }
+
+    sgf_elems = document.getElementsByClassName('sgf');
     for(var i = 0; i < sgf_elems.length; i++){
         process_sgf_elem(sgf_elems[i]);
     }
