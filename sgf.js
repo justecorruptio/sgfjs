@@ -1,9 +1,9 @@
 //TODO
 //  Alternate branches
-//  Captures
 //  present pass
 //  player/komi info
 //  diplay coordinates
+//  marks
 
 (function(){
 
@@ -352,6 +352,8 @@ function update_elem_from_state(sgf_elem, state){
         sgf_elem.board[i][j].classList.add('sgf-lastmove');
     }
 
+    sgf_elem.captures = state.captures.slice(0);
+
     sgf_elem.comment = state.comment;
     sgf_elem.comment_elem.innerText = state.comment;
 }
@@ -381,7 +383,15 @@ function process_node(sgf_elem, node, state){
         }
     }
 
-    state.comment = node['C'] && node['C'][0] || '';
+    var comment = node['C'] && node['C'][0] || '';
+    var capture_info = '' ;
+    if (state.captures[0] || state.captures[1]){
+        capture_info = 'Captures - White: ' + state.captures[0] +
+            ' Black: ' + state.captures[1] + '\n';
+    }
+
+    state.comment = capture_info + comment;
+
 
     if (move_count == 1){
         state.last_move = last_move;
@@ -420,13 +430,16 @@ function has_libs(board, i, j, rows, cols, marks){
 }
 
 function remove_marks(board, rows, cols, marks){
+    var count = 0;
     for(var i = 0; i < rows; i++){
         for(var j = 0; j < cols; j++){
             if(marks[i * cols + j]){
                 board[i][j] = 0;
+                count ++;
             }
         }
     }
+    return count;
 }
 
 function play_move(state, color, pos){
@@ -444,16 +457,18 @@ function play_move(state, color, pos){
     board[a][b] = color;
     var marks;
     var tonari = get_tonari(rows, cols, a, b);
+    var kills = 0;
     for(var n = 0; n < tonari.length; n++){
         var t_i = tonari[n][0];
         var t_j = tonari[n][1];
         if(board[t_i][t_j] + color == 3){
             marks = new Array(rows * cols);
             if(!has_libs(board, t_i, t_j, rows, cols, marks)){
-                remove_marks(board, rows, cols, marks);
+                kills += remove_marks(board, rows, cols, marks);
             }
         }
     }
+    state.captures[2 - color] += kills;
     return 1;
 }
 
