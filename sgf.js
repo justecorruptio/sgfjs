@@ -138,7 +138,7 @@ function build_board_area(sgf_elem){
     for (var i = 0; i < buttons_list.length; i++) {
         var button_elem = document.createElement('div');
         button_elem.classList.add('sgf-button', buttons_list[i][0]);
-        button_elem.innerText = buttons_list[i][1];
+        button_elem.textContent = buttons_list[i][1];
         buttons_row_elem.appendChild(button_elem);
 
         sgf_elem[buttons_list[i][2]] = button_elem;
@@ -372,7 +372,7 @@ function update_elem_from_state(sgf_elem, state){
     sgf_elem.captures = state.captures.slice(0);
 
     sgf_elem.comment = state.comment;
-    sgf_elem.comment_elem.innerText = state.comment;
+    sgf_elem.comment_elem.textContent = state.comment;
 
     sgf_elem.coords = state.coords.slice(0);
     var coord_elems = sgf_elem.getElementsByClassName('sgf-coord');
