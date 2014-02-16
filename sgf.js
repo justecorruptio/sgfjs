@@ -78,12 +78,8 @@ function parse_sgf_data(data){
             alt = stack.pop();
             alt.push(curr_alt);
         }
-        else{
-            console.error(data);
-        }
         data = data.substr(part[0].length);
     }
-    console.debug(alt[0]);
     return alt[0];
 }
 
@@ -287,7 +283,6 @@ function next_node(sgf_elem){
     last = path[path.length - 1];
     seq = get_node_by_path(sgf_elem, path.slice(0, path.length - 1));
     alt = get_node_by_path(sgf_elem, path.slice(0, path.length - 2));
-    console.debug(path);
     return last == seq.length - 1 && alt.length == 1;
 }
 
@@ -375,11 +370,11 @@ function process_node(sgf_elem, node, state){
         var moves = node[plan[i][1]] || [];
         for (var j = 0; j < moves.length; j++){
             var pos = coord_to_pos(moves[j]);
-            play_move(state, color, pos);
             if (moves[j] == 'tt' || moves[j] == ''){
                 last_move = 'pass';
             }
             else{
+                play_move(state, color, pos);
                 last_move = pos.slice(0);
             }
             move_count ++;
@@ -395,6 +390,15 @@ function process_node(sgf_elem, node, state){
     return state;
 }
 
+function get_tonari(rows, cols, i, j){
+    var tonari = []
+    if(i > 0) tonari.push([i - 1, j]);
+    if(j > 0) tonari.push([i, j - 1]);
+    if(i < rows - 1) tonari.push([i + 1, j]);
+    if(j < cols - 1) tonari.push([i, j + 1]);
+    return tonari;
+}
+
 function has_libs(board, i, j, rows, cols, marks){
     var color = board[i][j];
     var other;
@@ -403,25 +407,14 @@ function has_libs(board, i, j, rows, cols, marks){
     }
     marks[i * cols + j] = 1;
     var libs = 0;
-    if(i > 0){
-        other = board[i - 1][j];
-        libs |= other?other == color?
-            has_libs(board, i - 1, j, rows, cols, marks):0:1;
-    }
-    if(j > 0){
-        other = board[i][j - 1];
-        libs |= other?other == color?
-            has_libs(board, i, j - 1, rows, cols, marks):0:1;
-    }
-    if(i < rows - 1){
-        other = board[i + 1][j];
-        libs |= other?other == color?
-            has_libs(board, i + 1, j, rows, cols, marks):0:1;
-    }
-    if(j < cols - 1){
-        other = board[i][j + 1];
-        libs |= other?other == color?
-            has_libs(board, i, j + 1, rows, cols, marks):0:1;
+    var tonari = get_tonari(rows, cols, i, j);
+    for(var n = 0; n < tonari.length; n++){
+        var t_i = tonari[n][0];
+        var t_j = tonari[n][1];
+        other = board[t_i][t_j];
+        libs |= other?other == color?has_libs(
+            board,tonari[n][0], tonari[n][1],
+            rows, cols, marks):0:1;
     }
     return libs;
 }
@@ -450,33 +443,15 @@ function play_move(state, color, pos){
     }
     board[a][b] = color;
     var marks;
-    var libs;
-    if(a > 0 && board[a - 1][b] + color == 3){
-        marks = new Array(rows * cols);
-        libs = has_libs(board, a - 1, b, rows, cols, marks);
-        if(!libs){
-            remove_marks(board, rows, cols, marks);
-        }
-    }
-    if(b > 0 && board[a][b - 1] + color == 3){
-        marks = new Array(rows * cols);
-        libs = has_libs(board, a, b - 1, rows, cols, marks);
-        if(!libs){
-            remove_marks(board, rows, cols, marks);
-        }
-    }
-    if(a < rows - 1 && board[a + 1][b] + color == 3){
-        marks = new Array(rows * cols);
-        libs = has_libs(board, a + 1, b, rows, cols, marks);
-        if(!libs){
-            remove_marks(board, rows, cols, marks);
-        }
-    }
-    if(b < cols - 1 && board[a][b + 1] + color == 3){
-        marks = new Array(rows * cols);
-        libs = has_libs(board, a, b + 1, rows, cols, marks);
-        if(!libs){
-            remove_marks(board, rows, cols, marks);
+    var tonari = get_tonari(rows, cols, a, b);
+    for(var n = 0; n < tonari.length; n++){
+        var t_i = tonari[n][0];
+        var t_j = tonari[n][1];
+        if(board[t_i][t_j] + color == 3){
+            marks = new Array(rows * cols);
+            if(!has_libs(board, t_i, t_j, rows, cols, marks)){
+                remove_marks(board, rows, cols, marks);
+            }
         }
     }
     return 1;
