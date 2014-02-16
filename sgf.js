@@ -389,15 +389,18 @@ function process_node(sgf_elem, node, state){
             ', Black: ' + state.captures[1] + '\n';
     }
 
-    var player_info = '';
-    if (node['PB'] && node['PW']){
-        var white_rank = node['WR'] && node['WR'][0]?
+    var white_info = '';
+    if (node['PW']){
+        var rank = node['WR'] && node['WR'][0]?
             ' (' + node['WR'][0] + ')':'';
-        var black_rank = node['BR'] && node['BR'][0]?
+        white_info = 'White - ' + node['PW'][0] + rank + '\n';
+    }
+
+    var black_info = '';
+    if (node['PB']){
+        var rank = node['BR'] && node['BR'][0]?
             ' (' + node['BR'][0] + ')':'';
-        player_info = 'Players - White: ' + node['PW'][0] +
-            white_rank + ' vs. Black: ' + node['PB'][0] +
-            black_rank + '\n';
+        black_info = 'Black - ' + node['PB'][0] + rank + '\n';
     }
 
     var komi_info = node['KM'] && node['KM'][0]?
@@ -412,8 +415,8 @@ function process_node(sgf_elem, node, state){
 
     var comment = node['C'] && node['C'][0] || '';
 
-    state.comment = capture_info + player_info + komi_info +
-        handicap_info + result_info + comment;
+    state.comment = capture_info + white_info + black_info +
+        komi_info + handicap_info + result_info + comment;
 
 
     if (move_count == 1){

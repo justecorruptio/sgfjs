@@ -4,7 +4,7 @@ sgf {
 
 .sgf-container {
     max-width: 720px;
-    background-color: #dddddd;
+    background-color: #cccccc;
     padding: 7px;
 
     -webkit-touch-callout: none;
@@ -33,7 +33,7 @@ sgf {
     left: 0;
     right: 0;
     background-color: #F2D252;
-    border: solid 1px #333333;
+    //border: solid 1px #333333;
     padding: 2%;
 }
 
@@ -203,11 +203,12 @@ sgf {
 
     text-align: center;
     vertical-align: middle;
-    border: 1px solid #333333;
+    //border: 1px solid #333333;
     background-color: #39a775;
     font-family: arial, arialMT, Helvetica, sans-serif;
     font-size: 29px;
     color: #eeeeee;
+    cursor: pointer;
 }
 
 .sgf-button-disabled {
@@ -219,7 +220,8 @@ sgf {
     height: 120px;
     max-height: 120px;
     overflow: auto;
-    border: 1px solid #333333;
+    //border: 1px solid #333333;
     background-color: #eeeeee;
     padding: 3px;
+    -webkit-overflow-scrolling: touch;
 }
