@@ -105,7 +105,8 @@ function build_board_area(sgf_elem){
             cell_elem.classList.add('sgf-cell');
 
             var point_elem = document.createElement('div');
-            point_elem.classList.add('sgf-point', 'sgf-empty');
+            point_elem.classList.add('sgf-point');
+            point_elem.classList.add('sgf-empty');
             if(HOSHI[board_size] &&
                 HOSHI[board_size].indexOf(i * board_size + j) != -1
             ){
@@ -137,7 +138,8 @@ function build_board_area(sgf_elem){
     ]
     for (var i = 0; i < buttons_list.length; i++) {
         var button_elem = document.createElement('div');
-        button_elem.classList.add('sgf-button', buttons_list[i][0]);
+        button_elem.classList.add('sgf-button');
+        button_elem.classList.add(buttons_list[i][0]);
         button_elem.textContent = buttons_list[i][1];
         buttons_row_elem.appendChild(button_elem);
 
