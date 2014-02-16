@@ -1,8 +1,5 @@
 //TODO
 //  Alternate branches
-//  present pass
-//  diplay coordinates
-//  marks
 //  keyboard control
 
 (function(){
@@ -195,6 +192,7 @@ function process_sgf_elem(sgf_elem){
     sgf_elem.history = [];
     sgf_elem.path = [0, 0];
     sgf_elem.last_move = false;
+    sgf_elem.coords = [];
 
     sgf_elem.board = [];
     for(var i = 0; i < sgf_elem.rows; i++){
@@ -240,6 +238,7 @@ function process_sgf_elem(sgf_elem){
             sgf_elem.history = [];
             sgf_elem.path = [0, 0];
             sgf_elem.last_move = false;
+            sgf_elem.coords = [];
             for(var i = 0; i < sgf_elem.rows; i++){
                 for(var j = 0; j < sgf_elem.cols; j++){
                     sgf_elem.board[i][j].color = 0;
@@ -311,6 +310,20 @@ function coord_to_pos(coord){
     return pos;
 }
 
+function human_coord_to_pos(coord){
+    var pos = [0, 0];
+    pos[0] = 19 - parseInt(coord.substr(1));
+    var x = coord.charCodeAt(0) - 65;
+    if(x > 26){
+        x -= 32;
+    }
+    if(x > 7){
+        x--;
+    }
+    pos[1] = x;
+    return pos;
+}
+
 function sgf_elem_to_state(sgf_elem){
     var state = {};
     state.captures = sgf_elem.captures.slice(0);
@@ -323,6 +336,7 @@ function sgf_elem_to_state(sgf_elem){
     }
     state.last_move = sgf_elem.last_move;
     state.comment = sgf_elem.comment;
+    state.coords = sgf_elem.coords;
     return state;
 }
 
@@ -356,6 +370,22 @@ function update_elem_from_state(sgf_elem, state){
 
     sgf_elem.comment = state.comment;
     sgf_elem.comment_elem.innerText = state.comment;
+
+    sgf_elem.coords = state.coords.slice(0);
+    var coord_elems = sgf_elem.getElementsByClassName('sgf-coord');
+    while(coord_elems.length){
+        var coord_elem = coord_elems[0];
+        coord_elem.classList.remove('sgf-coord');
+        coord_elem.removeAttribute('point-label');
+        coord_elems = sgf_elem.getElementsByClassName('sgf-coord');
+    }
+    for(var n = 0; n < state.coords.length; n++){
+        var i = state.coords[n][0][0];
+        var j = state.coords[n][0][1];
+        var label = state.coords[n][1];
+        sgf_elem.board[i][j].classList.add('sgf-coord');
+        sgf_elem.board[i][j].setAttribute('point-label', label);
+    }
 }
 
 function process_node(sgf_elem, node, state){
@@ -367,10 +397,12 @@ function process_node(sgf_elem, node, state){
     var plan = [[1, 'B'], [1, 'AB'], [2, 'W'], [2, 'AW']];
     var move_count = 0;
     var last_move = false;
+    var move_color;
     for (var i = 0; i < plan.length; i++){
         var color = plan[i][0];
         var moves = node[plan[i][1]] || [];
         for (var j = 0; j < moves.length; j++){
+            move_color = color;
             var pos = coord_to_pos(moves[j]);
             if (moves[j] == 'tt' || moves[j] == ''){
                 last_move = 'pass';
@@ -412,12 +444,40 @@ function process_node(sgf_elem, node, state){
     var result_info = node['RE'] && node['RE'][0]?
         'Result - ' + node['RE'][0] + '\n': '';
 
+    var pass_info = '';
+    if (last_move == 'pass') {
+        pass_info = (move_color == 1?'Black':'White') + ' passes.\n';
+    }
 
     var comment = node['C'] && node['C'][0] || '';
 
     state.comment = capture_info + white_info + black_info +
-        komi_info + handicap_info + result_info + comment;
+        komi_info + handicap_info + result_info + pass_info +
+        comment;
 
+    var human_coords = comment.match(/\b[a-hj-t]\d{1,2}\b/ig)||[];
+    var coords = [];
+
+    for(var i = 0; i< human_coords.length; i++){
+        coords.push([
+            human_coord_to_pos(human_coords[i]),
+            human_coords[i]
+        ]);
+    }
+
+    var label_types = [['TR', '\u25B3'], ['SQ', '\u25FB'],
+        ['CR', '\u25EF'], ['MA', 'X']];
+    for(var i = 0; i < label_types.length; i++){
+        var labels = node[label_types[i][0]] || [];
+        for (var j = 0; j < labels.length; j++){
+            coords.push([
+                coord_to_pos(labels[j]),
+                label_types[i][1]
+            ]);
+        }
+    }
+
+    state.coords = coords;
 
     if (move_count == 1){
         state.last_move = last_move;
