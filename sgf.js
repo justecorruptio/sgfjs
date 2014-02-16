@@ -24,7 +24,7 @@ function arraysEqual(a, b) {
 }
 
 function parse_sgf_data(data){
-    data = data.replace(/<br\s*\/?>/ig, '');
+    data = data.replace(/<\/?[a-z]+.*?>/ig, '');
     data = data.replace(/^\s*|\s*$/g, '');
     var root = [];
 
