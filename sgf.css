@@ -13,6 +13,8 @@ sgf {
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+
+    line-height: 1;
 }
 
 .sgf-board-wrapper {
@@ -186,8 +188,8 @@ sgf {
 .sgf-coord:after {
     content: attr(point-label) !important;
     position: absolute;
-    height: 50%!important;
     width: 100%!important;
+    height: 50%!important;
     border: 0px solid #cb4582!important;
     background-color: rgba(0, 0, 0, 0)!important;
     color: #cb0082!important;
@@ -201,19 +203,20 @@ sgf {
     //font-weight:bold;
     text-shadow: 0px 1px #eeeeee, 0px -1px #eeeeee,
         1px 0px #eeeeee, -1px 0px #eeeeee;
+    font-size: 16px!important;
 }
 
 @media screen and (max-width: 500px){
     .sgf-coord:after {
-        font-size: 12px!important;
-        height: 70%!important;
+        font-size: 13px!important;
+        height: 60%!important;
     }
 }
 
 @media screen and (max-width: 380px){
     .sgf-coord:after {
-        font-size: 11px!important;
-        height: 90%!important;
+        font-size: 10px!important;
+        height: 75%!important;
     }
 }
 
