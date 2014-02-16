@@ -153,8 +153,6 @@ function build_board_area(sgf_elem){
         var button_spacer_elem = document.createTextNode(' ');
         buttons_row_elem.appendChild(button_spacer_elem);
     }
-    sgf_elem.button_start_elem.classList.add('sgf-button-disabled');
-    sgf_elem.button_prev_elem.classList.add('sgf-button-disabled');
     container_elem.appendChild(buttons_row_elem);
 
     var comment_elem = document.createElement('div');
@@ -163,6 +161,19 @@ function build_board_area(sgf_elem){
     container_elem.appendChild(comment_elem);
 
     sgf_elem.appendChild(container_elem);
+}
+
+function show_buttons(sgf_elem, show_prev, show_next) {
+    var hide_button_class = 'sgf-button-disabled';
+    sgf_elem.button_start_elem.classList
+        [show_prev?'remove':'add'](hide_button_class);
+    sgf_elem.button_prev_elem.classList
+        [show_prev?'remove':'add'](hide_button_class);
+
+    sgf_elem.button_next_elem.classList
+        [show_next?'remove':'add'](hide_button_class);
+    sgf_elem.button_end_elem.classList
+        [show_next?'remove':'add'](hide_button_class);
 }
 
 function process_sgf_elem(sgf_elem){
@@ -202,17 +213,7 @@ function process_sgf_elem(sgf_elem){
             var state = process_node(sgf_elem,
                 get_node_by_path(sgf_elem, sgf_elem.path));
             update_elem_from_state(sgf_elem, state);
-            sgf_elem.button_start_elem.classList
-                .remove('sgf-button-disabled');
-            sgf_elem.button_prev_elem.classList
-                .remove('sgf-button-disabled');
-
-            if (is_last){
-                sgf_elem.button_next_elem.classList
-                    .add('sgf-button-disabled');
-                sgf_elem.button_end_elem.classList
-                    .add('sgf-button-disabled');
-            }
+            show_buttons(sgf_elem, true, !is_last);
         });
 
     sgf_elem.getElementsByClassName('sgf-button-end')[0]
@@ -226,34 +227,15 @@ function process_sgf_elem(sgf_elem){
                     state);
             }
             update_elem_from_state(sgf_elem, state);
-            sgf_elem.button_start_elem.classList
-                .remove('sgf-button-disabled');
-            sgf_elem.button_prev_elem.classList
-                .remove('sgf-button-disabled');
-            sgf_elem.button_next_elem.classList
-                .add('sgf-button-disabled');
-            sgf_elem.button_end_elem.classList
-                .add('sgf-button-disabled');
+            show_buttons(sgf_elem, true, false);
         });
 
     sgf_elem.getElementsByClassName('sgf-button-prev')[0]
         .addEventListener(is_mobile?'touchstart':'click', function(e){
-            if (sgf_elem.path == [0, 0]){
-                return;
-            }
-            prev_node(sgf_elem);
+            var is_start = prev_node(sgf_elem);
             var state = sgf_elem.history.pop();
             update_elem_from_state(sgf_elem, state);
-            sgf_elem.button_next_elem.classList
-                .remove('sgf-button-disabled');
-            sgf_elem.button_end_elem.classList
-                .remove('sgf-button-disabled');
-            if (arraysEqual(sgf_elem.path, [0, 0])){
-                sgf_elem.button_start_elem.classList
-                    .add('sgf-button-disabled');
-                sgf_elem.button_prev_elem.classList
-                    .add('sgf-button-disabled');
-            }
+            show_buttons(sgf_elem, !is_start, true);
         })
 
     sgf_elem.getElementsByClassName('sgf-button-start')[0]
@@ -270,19 +252,13 @@ function process_sgf_elem(sgf_elem){
             var state = process_node(sgf_elem,
                 get_node_by_path(sgf_elem, sgf_elem.path));
             update_elem_from_state(sgf_elem, state);
-            sgf_elem.button_start_elem.classList
-                .add('sgf-button-disabled');
-            sgf_elem.button_prev_elem.classList
-                .add('sgf-button-disabled');
-            sgf_elem.button_next_elem.classList
-                .remove('sgf-button-disabled');
-            sgf_elem.button_end_elem.classList
-                .remove('sgf-button-disabled');
+            show_buttons(sgf_elem, false, true);
         })
 
     var state = process_node(sgf_elem,
         get_node_by_path(sgf_elem, sgf_elem.path));
     update_elem_from_state(sgf_elem, state);
+    show_buttons(sgf_elem, false, true);
 }
 
 function get_node_by_path(sgf_elem, path){
@@ -330,7 +306,7 @@ function prev_node(sgf_elem){
     else{
         path.push(last - 1);
     }
-    return false;
+    return arraysEqual(sgf_elem.path, [0, 0]);
 }
 
 function coord_to_pos(coord){
