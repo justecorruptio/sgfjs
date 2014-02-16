@@ -1,9 +1,9 @@
 //TODO
 //  Alternate branches
 //  present pass
-//  player/komi info
 //  diplay coordinates
 //  marks
+//  keyboard control
 
 (function(){
 
@@ -383,14 +383,37 @@ function process_node(sgf_elem, node, state){
         }
     }
 
-    var comment = node['C'] && node['C'][0] || '';
     var capture_info = '' ;
     if (state.captures[0] || state.captures[1]){
         capture_info = 'Captures - White: ' + state.captures[0] +
-            ' Black: ' + state.captures[1] + '\n';
+            ', Black: ' + state.captures[1] + '\n';
     }
 
-    state.comment = capture_info + comment;
+    var player_info = '';
+    if (node['PB'] && node['PW']){
+        var white_rank = node['WR'] && node['WR'][0]?
+            ' (' + node['WR'][0] + ')':'';
+        var black_rank = node['BR'] && node['BR'][0]?
+            ' (' + node['BR'][0] + ')':'';
+        player_info = 'Players - White: ' + node['PW'][0] +
+            white_rank + ' vs. Black: ' + node['PB'][0] +
+            black_rank + '\n';
+    }
+
+    var komi_info = node['KM'] && node['KM'][0]?
+        'Komi - ' + node['KM'][0] + '\n': '';
+
+    var handicap_info = node['HA'] && node['HA'][0]?
+        'Handicap - ' + node['HA'][0] + '\n': '';
+
+    var result_info = node['RE'] && node['RE'][0]?
+        'Result - ' + node['RE'][0] + '\n': '';
+
+
+    var comment = node['C'] && node['C'][0] || '';
+
+    state.comment = capture_info + player_info + komi_info +
+        handicap_info + result_info + comment;
 
 
     if (move_count == 1){
