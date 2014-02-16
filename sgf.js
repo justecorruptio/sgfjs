@@ -3,6 +3,7 @@
 //  Captures
 //  present pass
 //  player/komi info
+//  diplay coordinates
 
 (function(){
 
@@ -198,8 +199,9 @@ function process_sgf_elem(sgf_elem){
     sgf_elem.getElementsByClassName('sgf-button-next')[0]
         .addEventListener(is_mobile?'touchstart':'click',function(e){
             var is_last = next_node(sgf_elem);
-            process_node(sgf_elem,
+            var state = process_node(sgf_elem,
                 get_node_by_path(sgf_elem, sgf_elem.path));
+            update_elem_from_state(sgf_elem, state);
             sgf_elem.button_start_elem.classList
                 .remove('sgf-button-disabled');
             sgf_elem.button_prev_elem.classList
@@ -216,11 +218,14 @@ function process_sgf_elem(sgf_elem){
     sgf_elem.getElementsByClassName('sgf-button-end')[0]
         .addEventListener(is_mobile?'touchstart':'click',function(e){
             var is_last = false;
+            var state;
             while(!is_last){
                 is_last = next_node(sgf_elem);
-                process_node(sgf_elem,
-                    get_node_by_path(sgf_elem, sgf_elem.path));
+                state = process_node(sgf_elem,
+                    get_node_by_path(sgf_elem, sgf_elem.path),
+                    state);
             }
+            update_elem_from_state(sgf_elem, state);
             sgf_elem.button_start_elem.classList
                 .remove('sgf-button-disabled');
             sgf_elem.button_prev_elem.classList
@@ -262,8 +267,9 @@ function process_sgf_elem(sgf_elem){
                     sgf_elem.board[i][j].color = 0;
                 }
             }
-            process_node(sgf_elem,
+            var state = process_node(sgf_elem,
                 get_node_by_path(sgf_elem, sgf_elem.path));
+            update_elem_from_state(sgf_elem, state);
             sgf_elem.button_start_elem.classList
                 .add('sgf-button-disabled');
             sgf_elem.button_prev_elem.classList
@@ -274,7 +280,9 @@ function process_sgf_elem(sgf_elem){
                 .remove('sgf-button-disabled');
         })
 
-    process_node(sgf_elem, get_node_by_path(sgf_elem, sgf_elem.path));
+    var state = process_node(sgf_elem,
+        get_node_by_path(sgf_elem, sgf_elem.path));
+    update_elem_from_state(sgf_elem, state);
 }
 
 function get_node_by_path(sgf_elem, path){
@@ -377,8 +385,10 @@ function update_elem_from_state(sgf_elem, state){
     sgf_elem.comment_elem.innerText = state.comment;
 }
 
-function process_node(sgf_elem, node){
-    var state = sgf_elem_to_state(sgf_elem);
+function process_node(sgf_elem, node, state){
+    if(!state){
+        state = sgf_elem_to_state(sgf_elem);
+    }
     var clone = JSON.parse(JSON.stringify(state))
 
     var plan = [[1, 'B'], [1, 'AB'], [2, 'W'], [2, 'AW']];
@@ -406,7 +416,7 @@ function process_node(sgf_elem, node){
         state.last_move = last_move;
     }
     sgf_elem.history.push(clone);
-    update_elem_from_state(sgf_elem, state);
+    return state;
 }
 
 function has_libs(board, i, j, rows, cols, marks){
