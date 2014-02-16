@@ -48,6 +48,7 @@ sgf {
 
 .sgf-row {
     display: table-row;
+    height: 1%; //hack for ff
 }
 
 .sgf-cell {
