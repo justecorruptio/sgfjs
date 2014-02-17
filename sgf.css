@@ -216,6 +216,8 @@ sgf {
         1px 0px #eeeeee, -1px 0px #eeeeee;
     font-size: 14px!important;
     white-space:nowrap;
+
+    z-index: 999;
 }
 
 @media screen and (max-width: 500px){
