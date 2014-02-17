@@ -285,14 +285,18 @@ sgf {
     padding: 3px;
     -webkit-overflow-scrolling: touch;
 
-    -webkit-touch-callout: text;
-    -webkit-user-select: text;
-    -khtml-user-select: text;
-    -moz-user-select: text;
-    -ms-user-select: text;
-    user-select: text;
-
     white-space: pre-wrap;
 
     border: 7px solid #cccccc;
+}
+
+@media screen and (min-width: 498px){
+    .sgf-comment {
+        -webkit-touch-callout: text;
+        -webkit-user-select: text;
+        -khtml-user-select: text;
+        -moz-user-select: text;
+        -ms-user-select: text;
+        user-select: text;
+    }
 }
