@@ -4,8 +4,8 @@ sgf {
 
 .sgf-container {
     max-width: 720px;
-    background-color: #cccccc;
-    padding: 7px;
+    //background-color: #cccccc;
+    //padding: 7px;
 
     -webkit-touch-callout: none;
     -webkit-user-select: none;
@@ -22,10 +22,10 @@ sgf {
     width: 100%;
 }
 
-.sgf-board-wrapper:before {
+.sgf-board-wrapper:after {
     content: "";
     display: block;
-    padding-top: 100%;
+    padding-bottom: 100%;
 }
 
 .sgf-board-wrapper-inner {
@@ -34,16 +34,27 @@ sgf {
     bottom: 0;
     left: 0;
     right: 0;
-    background-color: #F2D252;
     //border: solid 1px #333333;
-    padding: 2%;
+    margin-right: 7px;
 }
 
 .sgf-board {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
     display: table;
     table-layout: fixed;
     height: 100%;
     width: 100%;
+    background-color: #F2D252;
+
+    border-collapse: collapse;
+    border-spacing: 0;
+
+    border-top: 7px solid #cccccc;
+    border-left: 7px solid #cccccc;
+    border-right: 7px solid #cccccc;
 }
 
 .sgf-row {
@@ -226,7 +237,8 @@ sgf {
     text-align: justify;
     width: 100%;
     font-size: 0.1px;
-    margin-top: 7px;
+    background-color: #cccccc;
+    padding-top: 7px;
 }
 
 .sgf-buttons-row:after {
@@ -236,7 +248,7 @@ sgf {
 }
 
 .sgf-button {
-    width: 22%;
+    width: 21%;
     height: 30px;
     display: inline-block;
 
@@ -250,12 +262,20 @@ sgf {
     cursor: pointer;
 }
 
+.sgf-button:first-child {
+    margin-left: 7px;
+}
+
+.sgf-button:last-child {
+    margin-right: 7px;
+}
+
 .sgf-button-disabled {
     visibility: hidden;
 }
 
 .sgf-comment {
-    margin-top: 7px;
+    //margin-top: 7px;
     height: 120px;
     max-height: 120px;
     overflow: auto;
@@ -272,4 +292,6 @@ sgf {
     user-select: text;
 
     white-space: pre-wrap;
+
+    border: 7px solid #cccccc;
 }
