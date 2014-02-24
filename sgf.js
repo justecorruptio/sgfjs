@@ -475,6 +475,14 @@ function process_node(sgf_elem, node, state){
         }
     }
 
+    var labels = node['LB'] || [];
+    for (var j = 0; j < labels.length; j++){
+        coords.push([
+            coord_to_pos(labels[j].substr(0, 2)),
+            labels[j].substr(3)
+        ]);
+    }
+
     state.coords = coords;
 
     if (move_count == 1){
@@ -537,9 +545,6 @@ function play_move(state, color, pos){
     var b = pos[1];
     var rows = board.length;
     var cols = board[0].length;
-    if (a == 19 && b == 19){
-        return 1;
-    }
     if(board[a][b]){
         return 0;
     }
