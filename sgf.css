@@ -74,7 +74,7 @@ sgf {
     width: 100%;
 }
 
-.sgf-cell:not(:first-child):not(:last-child) .sgf-empty:before {
+.sgf-cell:not(:first-child):not(:last-child) .sgf-empty:not(.sgf-coord):before {
     position: absolute;
     left: 0;
     top: 50%;
@@ -85,7 +85,7 @@ sgf {
     display: block;
 }
 
-.sgf-cell:first-child .sgf-empty:before {
+.sgf-cell:first-child .sgf-empty:not(.sgf-coord):before {
     position: absolute;
     right: 0;
     top: 50%;
@@ -96,7 +96,7 @@ sgf {
     display: block;
 }
 
-.sgf-cell:last-child .sgf-empty:before {
+.sgf-cell:last-child .sgf-empty:not(.sgf-coord):before {
     position: absolute;
     left: 0;
     top: 50%;
@@ -107,7 +107,7 @@ sgf {
     display: block;
 }
 
-.sgf-row:not(:first-child):not(:last-child) .sgf-cell .sgf-empty:after {
+.sgf-row:not(:first-child):not(:last-child) .sgf-cell .sgf-empty:not(.sgf-coord):after {
     position: absolute;
     top: 0;
     left: 50%;
@@ -118,7 +118,7 @@ sgf {
     display: block;
 }
 
-.sgf-row:first-child .sgf-cell .sgf-empty:after {
+.sgf-row:first-child .sgf-cell .sgf-empty:not(.sgf-coord):after {
     position: absolute;
     bottom: 0;
     left: 50%;
@@ -129,7 +129,7 @@ sgf {
     display: block;
 }
 
-.sgf-row:last-child .sgf-cell .sgf-empty:after {
+.sgf-row:last-child .sgf-cell .sgf-empty:not(.sgf-coord):after {
     position: absolute;
     top: 0;
     left: 50%;
