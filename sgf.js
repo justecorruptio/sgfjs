@@ -30,16 +30,13 @@ function parse_sgf_data(data){
 
     var stack = [];
     var alt = [];
-    alt.type = 'alt';
     var seq = [];
-    seq.type = 'seq';
     var part;
     while(data.length){
         if(part = data.match(
             /^;(([A-Z]{1,2})(\[([^\\\]]|\\\])*\]\s*)+)+/
         )){
             var node = {};
-            node.type = 'node';
             var sub_part = part[0].match(
                 /([A-Z]{1,2})(\[([^\\\]]|\\\])*\]\s*)+/g
             )
@@ -59,17 +56,14 @@ function parse_sgf_data(data){
             if(seq.length){
                 alt.push(seq);
                 seq = [];
-                seq.type = 'seq';
             }
             stack.push(alt);
             alt = [];
-            alt.type = 'alt';
         }
         else if(part = data.match(/^\)\s*/)){
             if(seq.length){
                 alt.push(seq);
                 seq = [];
-                seq.type = 'seq';
             }
             var curr_alt = alt;
             alt = stack.pop();
@@ -81,7 +75,6 @@ function parse_sgf_data(data){
 }
 
 function build_board_area(sgf_elem){
-
     var board_size = sgf_elem.rows;
 
     var container_elem = document.createElement('div');
@@ -491,7 +484,9 @@ function process_node(sgf_elem, node, state){
     return state;
 }
 
-function get_tonari(rows, cols, i, j){
+function get_tonari(board, i, j){
+    var rows = board.length;
+    var cols = board[0].length;
     var tonari = []
     if(i > 0) tonari.push([i - 1, j]);
     if(j > 0) tonari.push([i, j - 1]);
@@ -500,7 +495,9 @@ function get_tonari(rows, cols, i, j){
     return tonari;
 }
 
-function has_libs(board, i, j, rows, cols, marks){
+function has_libs(board, i, j, marks){
+    var rows = board.length;
+    var cols = board[0].length;
     var color = board[i][j];
     var other;
     if(marks[i * cols + j]){
@@ -508,19 +505,20 @@ function has_libs(board, i, j, rows, cols, marks){
     }
     marks[i * cols + j] = 1;
     var libs = 0;
-    var tonari = get_tonari(rows, cols, i, j);
+    var tonari = get_tonari(board, i, j);
     for(var n = 0; n < tonari.length; n++){
         var t_i = tonari[n][0];
         var t_j = tonari[n][1];
         other = board[t_i][t_j];
-        libs |= other?other == color?has_libs(
-            board,tonari[n][0], tonari[n][1],
-            rows, cols, marks):0:1;
+        libs |= other?other == color?
+            has_libs(board, t_i, t_j, marks):0:1;
     }
     return libs;
 }
 
-function remove_marks(board, rows, cols, marks){
+function remove_marks(board, marks){
+    var rows = board.length;
+    var cols = board[0].length;
     var count = 0;
     for(var i = 0; i < rows; i++){
         for(var j = 0; j < cols; j++){
@@ -547,15 +545,15 @@ function play_move(state, color, pos){
     }
     board[a][b] = color;
     var marks;
-    var tonari = get_tonari(rows, cols, a, b);
+    var tonari = get_tonari(board, a, b);
     var kills = 0;
     for(var n = 0; n < tonari.length; n++){
         var t_i = tonari[n][0];
         var t_j = tonari[n][1];
         if(board[t_i][t_j] + color == 3){
             marks = new Array(rows * cols);
-            if(!has_libs(board, t_i, t_j, rows, cols, marks)){
-                kills += remove_marks(board, rows, cols, marks);
+            if(!has_libs(board, t_i, t_j, marks)){
+                kills += remove_marks(board, marks);
             }
         }
     }
