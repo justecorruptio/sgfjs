@@ -453,15 +453,7 @@ function process_node(sgf_elem, node, state){
         komi_info + handicap_info + result_info + pass_info +
         comment;
 
-    var human_coords = comment.match(/\b[a-hj-t]\d{1,2}\b/ig)||[];
     var coords = [];
-
-    for(var i = 0; i< human_coords.length; i++){
-        coords.push([
-            human_coord_to_pos(human_coords[i]),
-            human_coords[i]
-        ]);
-    }
 
     var label_types = [['TR', '\u25B3'], ['SQ', '\u25FB'],
         ['CR', '\u25EF'], ['MA', 'X']];
@@ -473,6 +465,14 @@ function process_node(sgf_elem, node, state){
                 label_types[i][1]
             ]);
         }
+    }
+
+    var human_coords = comment.match(/\b[a-hj-t]\d{1,2}\b/ig)||[];
+    for(var i = 0; i< human_coords.length; i++){
+        coords.push([
+            human_coord_to_pos(human_coords[i]),
+            human_coords[i]
+        ]);
     }
 
     var labels = node['LB'] || [];
