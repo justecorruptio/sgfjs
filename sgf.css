@@ -214,6 +214,7 @@ sgf {
     font-size: 16px!important;
     white-space:nowrap;
     font-family: arial, arialMT, Helvetica, sans-serif;
+    letter-spacing: -1px;
 
     z-index: 999;
 }
@@ -232,14 +233,14 @@ sgf {
 
 @media screen and (max-width: 500px){
     .sgf-coord:after {
-        font-size: 14px!important;
+        font-size: 12px!important;
         height: 70%!important;
     }
 }
 
 @media screen and (max-width: 380px){
     .sgf-coord:after {
-        font-size: 12px!important;
+        font-size: 10px!important;
         height: 85%!important;
     }
 }
