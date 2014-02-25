@@ -137,7 +137,7 @@ sgf {
     display: block;
 }
 
-.sgf-empty .sgf-hoshi {
+.sgf-empty:not(.sgf-coord) .sgf-hoshi {
     position: absolute;
     height: 20%;
     min-height: 5px;
