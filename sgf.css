@@ -231,6 +231,13 @@ sgf {
     color: #cb0082!important;
 }
 
+@media screen and (max-width: 720px){
+    .sgf-coord:after {
+        font-size: 14px!important;
+        height: 60%!important;
+    }
+}
+
 @media screen and (max-width: 500px){
     .sgf-coord:after {
         font-size: 12px!important;
