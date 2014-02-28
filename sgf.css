@@ -13,6 +13,8 @@ sgf {
     user-select: none;
 
     line-height: 1.2;
+
+    text-align: left;
 }
 
 .sgf-board-wrapper {
