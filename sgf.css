@@ -3,7 +3,7 @@ sgf {
 }
 
 .sgf-container {
-    max-width: 720px;
+    max-width: 480px;
 
     -webkit-touch-callout: none;
     -webkit-user-select: none;
@@ -298,6 +298,7 @@ sgf {
     height: 120px;
     max-height: 120px;
     overflow: auto;
+    overflow-x: hidden;
     background-color: #eeeeee;
     padding: 3px;
     -webkit-overflow-scrolling: touch;
@@ -305,6 +306,8 @@ sgf {
     white-space: pre-wrap;
 
     border: 7px solid #cccccc;
+
+    font-size: 14px;
 }
 
 @media screen and (min-width: 498px){
@@ -315,5 +318,7 @@ sgf {
         -moz-user-select: text;
         -ms-user-select: text;
         user-select: text;
+
+        font-size: 16px;
     }
 }
