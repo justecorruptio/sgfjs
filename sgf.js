@@ -183,7 +183,16 @@ function process_sgf_elem(sgf_elem){
 
     sgf_elem.innerHTML = '';
 
-    sgf_elem.data = parse_sgf_data(data);
+    try {
+        sgf_elem.data = parse_sgf_data(data);
+    }
+    catch(err) {
+        sgf_elem.data = [[{
+            'SZ': 19,
+            'C': ['An error occured while loading SGF data.'],
+        },[]]];
+    }
+
     sgf_elem.rows = sgf_elem.data[0][0]['SZ'] || 19;
     sgf_elem.cols = sgf_elem.data[0][0]['SZ'] || 19;
     sgf_elem.captures = [0, 0];
